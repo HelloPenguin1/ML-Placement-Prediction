@@ -10,3 +10,4 @@ kaggle
 kagglehub
 fastapi
 pydantic
+uvicorn

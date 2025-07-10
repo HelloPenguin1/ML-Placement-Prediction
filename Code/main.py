@@ -6,7 +6,10 @@ import pickle
 import pandas as pd
 
 with open('model.pkl', 'rb') as f:
-    model = pickle.load()
+    model = pickle.load(f)
+
+with open('label_encoder.pkl', 'rb') as f:
+    label_encoder = pickle.load(f)
 
 app = FastAPI()
 
@@ -27,22 +30,24 @@ class UserInput(BaseModel):
 #API Endpoint
 @app.post('/predict')
 def predict_placement(data: UserInput):
+    try:
+        input_df = pd.DataFrame([{
+            'Prev_Sem_Result': data.Prev_Sem_Result,
+            'CGPA': data.CGPA,
+            'Academic_Performance':data.Academic_Performance,
+            'Internship_Experience': data.Internship_Experience,
+            'Projects_Completed': data.Projects_Completed,
+            'IQ_group': data.IQ_group,
+            'extra_curr_score': data.extra_curr_score,
+            'Comm_score':data.Comm_score
+        }])    
 
-    input_df = pd.DataFrame([{
-        'Prev_Sem_Result': data.Prev_Sem_Result,
-        'CGPA': data.CGPA,
-        'Academic_Performance':data.Academic_Performance,
-        'Internship_Experience': data.Internship_Experience,
-        'Projects_Completed': data.Projects_Completed,
-        'IQ_group': data.IQ_group,
-        'extra_curr_score': data.extra_curr_score,
-        'Comm_score':data.Comm_score
-    }])    
+        prediction = model.predict(input_df)[0]
+        predicted_label = label_encoder.inverse_transform([prediction])[0]
 
-    prediction = model.predict(input_df)[0]
-
-    return JSONResponse(status_code=200, content={'predicted_category': prediction})
-
+        return JSONResponse(status_code=200, content={'predicted_category': predicted_label})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={'error': str(e)})
 
 
     
