@@ -8,3 +8,5 @@ streamlit
 scikit-learn
 kaggle
 kagglehub
+fastapi
+pydantic
