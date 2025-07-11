@@ -17,9 +17,9 @@ app = FastAPI()
 #Pydantic Model to validate upcoming User Data 
 
 class UserInput(BaseModel):
-    Prev_Sem_Result : Annotated[float, Field(..., gt=5, lt=10, description="Previous Semester's GPA")]
+    Prev_Sem_Result : Annotated[float, Field(..., ge=5, le=10, description="Previous Semester's GPA")]
     IQ_group: Annotated[Literal['Low', 'Below Average', 'Average', 'Above Average', 'High'], Field(..., description="IQ/Critical-Thinking Skills")]
-    CGPA: Annotated[float, Field(..., gt=5, lt=10, description="Current CGPA of Student")]
+    CGPA: Annotated[float, Field(..., ge=5, le=10, description="Current CGPA of Student")]
     Academic_Performance: Annotated[int, Field(..., gt=0, le=10, description="Academic Performance Rating on a scale of 1-10")]
     Internship_Experience: Annotated[Literal['Yes', 'No'], Field(..., description="Does the student have internship experience")]
     Projects_Completed: Annotated[int, Field(..., ge=0, le=5, description="How many projects have the student completed?")]
@@ -46,6 +46,9 @@ def predict_placement(data: UserInput):
         predicted_label = label_encoder.inverse_transform([prediction])[0]
 
         return JSONResponse(status_code=200, content={'predicted_category': predicted_label})
+    
+
+    
     except Exception as e:
         return JSONResponse(status_code=500, content={'error': str(e)})
 
