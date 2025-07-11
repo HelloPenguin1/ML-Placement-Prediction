@@ -27,7 +27,7 @@ if st.button("Predict Placement"):
         'CGPA': CGPA,
         'Academic_Performance':Academic_Performance,
         'Internship_Experience': Internship_Experience,
-        'Projects_Completed': Projects_Completed,
+        'Projects_Completed': int(Projects_Completed),
         'IQ_group': IQ_group,
         'extra_curr_score': extra_curr_score,
         'Comm_score':Comm_score
@@ -41,10 +41,8 @@ if st.button("Predict Placement"):
             prediction = result["response"]
             st.success(f"Placement Prediction: **{prediction['predicted_category']}**")
             st.write("Confidence:", prediction["confidence"])
-            st.write("Class Probabilities:")
-            st.json(prediction["class_probabilities"])
         else:
-            st.error(f"API Code: {response.status_code}")
+            st.error(f"API Error: {response.status_code}")
             st.write(result)
 
     except requests.exceptions.ConnectionError:

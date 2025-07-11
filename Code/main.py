@@ -44,10 +44,19 @@ def predict_placement(data: UserInput):
 
         prediction = model.predict(input_df)[0]
         predicted_label = label_encoder.inverse_transform([prediction])[0]
-
-        return JSONResponse(status_code=200, content={'predicted_category': predicted_label})
     
+        try:
+            probabilities = model.predict_proba(input_df)[0]
+            confidence = max(probabilities)
+        except:
+            confidence = "N/A"
 
+        return JSONResponse(status_code=200, content={
+            'response': {
+                'predicted_category': predicted_label,
+                'confidence': confidence,
+            }
+        })
     
     except Exception as e:
         return JSONResponse(status_code=500, content={'error': str(e)})
