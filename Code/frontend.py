@@ -21,4 +21,32 @@ extra_curr_score=st.selectbox("Rate your involvement in extra-curricular activit
 Comm_score=st.selectbox("Rate your Soft Skills/Communication Skills", ['Poor', 'Fair', 'Good', 'Excellent'])
 
 
+if st.button("Predict Placement"):
+    input_data={
+        'Prev_Sem_Result': Prev_Sem_Result,
+        'CGPA': CGPA,
+        'Academic_Performance':Academic_Performance,
+        'Internship_Experience': Internship_Experience,
+        'Projects_Completed': Projects_Completed,
+        'IQ_group': IQ_group,
+        'extra_curr_score': extra_curr_score,
+        'Comm_score':Comm_score
+    }
+
+    try:
+        response = requests.post(API_URL, json=input_data)
+        result = response.json()
+
+        if response.status_code == 200 and "response" in result:
+            prediction = result["response"]
+            st.success(f"Placement Prediction: **{prediction['predicted_category']}**")
+            st.write("Confidence:", prediction["confidence"])
+            st.write("Class Probabilities:")
+            st.json(prediction["class_probabilities"])
+        else:
+            st.error(f"API Code: {response.status_code}")
+            st.write(result)
+
+    except requests.exceptions.ConnectionError:
+        st.error("Could not connect to the FastAPI server. Make sure it's running.")
 
