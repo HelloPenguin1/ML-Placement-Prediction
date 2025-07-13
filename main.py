@@ -5,10 +5,10 @@ from typing import Literal, Annotated
 import pickle
 import pandas as pd
 
-with open('model.pkl', 'rb') as f:
+with open('model/model.pkl', 'rb') as f:
     model = pickle.load(f)
 
-with open('label_encoder.pkl', 'rb') as f:
+with open('model/label_encoder.pkl', 'rb') as f:
     label_encoder = pickle.load(f)
 
 app = FastAPI()
@@ -25,6 +25,24 @@ class UserInput(BaseModel):
     Projects_Completed: Annotated[int, Field(..., ge=0, le=5, description="How many projects have the student completed?")]
     extra_curr_score: Annotated[Literal['None', 'Low', 'Moderate', 'High'], Field(..., description="Student's Involvement in Extra_Curricular Activities")]
     Comm_score: Annotated[Literal['Poor', 'Fair', 'Good', 'Excellent'], Field(..., description="Student's Communication/Soft Skill Rating")]
+
+
+@app.get('/')
+def home():
+    return {'message': 'College Placement Prediction using Random Forest'}
+
+
+
+
+#machine readable (to make it deployable in cloud services)
+@app.get('/health')
+def health_check():
+    return (
+        {
+            'status':'OK'
+        }
+    )
+
 
 
 #API Endpoint
