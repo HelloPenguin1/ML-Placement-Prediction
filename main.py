@@ -2,11 +2,10 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, computed_field
 from typing import Literal, Annotated
+from schema.userinput import UserInput
+from model.predict import predict_output, model
 import pickle
-import pandas as pd
 
-with open('model/model.pkl', 'rb') as f:
-    model = pickle.load(f)
 
 with open('model/label_encoder.pkl', 'rb') as f:
     label_encoder = pickle.load(f)
@@ -14,24 +13,12 @@ with open('model/label_encoder.pkl', 'rb') as f:
 app = FastAPI()
 
 
-#Pydantic Model to validate upcoming User Data 
-
-class UserInput(BaseModel):
-    Prev_Sem_Result : Annotated[float, Field(..., ge=5, le=10, description="Previous Semester's GPA")]
-    IQ_group: Annotated[Literal['Low', 'Below Average', 'Average', 'Above Average', 'High'], Field(..., description="IQ/Critical-Thinking Skills")]
-    CGPA: Annotated[float, Field(..., ge=5, le=10, description="Current CGPA of Student")]
-    Academic_Performance: Annotated[int, Field(..., gt=0, le=10, description="Academic Performance Rating on a scale of 1-10")]
-    Internship_Experience: Annotated[Literal['Yes', 'No'], Field(..., description="Does the student have internship experience")]
-    Projects_Completed: Annotated[int, Field(..., ge=0, le=5, description="How many projects have the student completed?")]
-    extra_curr_score: Annotated[Literal['None', 'Low', 'Moderate', 'High'], Field(..., description="Student's Involvement in Extra_Curricular Activities")]
-    Comm_score: Annotated[Literal['Poor', 'Fair', 'Good', 'Excellent'], Field(..., description="Student's Communication/Soft Skill Rating")]
-
-
 @app.get('/')
 def home():
     return {'message': 'College Placement Prediction using Random Forest'}
 
-
+#good practice to note model verson
+MODEL_VERSION = 1.0
 
 
 #machine readable (to make it deployable in cloud services)
@@ -39,17 +26,18 @@ def home():
 def health_check():
     return (
         {
-            'status':'OK'
+            'status':'OK',
+            'version':MODEL_VERSION,
+            'model_loaded': model is not None
         }
     )
-
 
 
 #API Endpoint
 @app.post('/predict')
 def predict_placement(data: UserInput):
     try:
-        input_df = pd.DataFrame([{
+        input_df = {
             'Prev_Sem_Result': data.Prev_Sem_Result,
             'CGPA': data.CGPA,
             'Academic_Performance':data.Academic_Performance,
@@ -58,21 +46,15 @@ def predict_placement(data: UserInput):
             'IQ_group': data.IQ_group,
             'extra_curr_score': data.extra_curr_score,
             'Comm_score':data.Comm_score
-        }])    
-
-        prediction = model.predict(input_df)[0]
+        }    
+        
+        prediction = predict_output(input_df)
         predicted_label = label_encoder.inverse_transform([prediction])[0]
     
-        try:
-            probabilities = model.predict_proba(input_df)[0]
-            confidence = max(probabilities)
-        except:
-            confidence = "N/A"
 
         return JSONResponse(status_code=200, content={
             'response': {
                 'predicted_category': predicted_label,
-                'confidence': confidence,
             }
         })
     
