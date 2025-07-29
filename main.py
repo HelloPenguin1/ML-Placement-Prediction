@@ -48,13 +48,14 @@ def predict_placement(data: UserInput):
             'Comm_score':data.Comm_score
         }    
         
-        prediction = predict_output(input_df)
+        prediction, confidence = predict_output(input_df)
         predicted_label = label_encoder.inverse_transform([prediction])[0]
     
 
         return JSONResponse(status_code=200, content={
             'response': {
                 'predicted_category': predicted_label,
+                'confidence': round(confidence, 3)
             }
         })
     

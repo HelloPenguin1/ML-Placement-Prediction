@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = 'http://127.0.0.1:8000/predict'
+API_URL = 'http://127.0.0.1:8000/predict'  ##noted from FASTAPI /docs
 
 st.title("College Student Placement Prediction")
 st.markdown("Based on a realistic synthetic Kaggle dataset of 10,000 students designed to analyze factors affecting college placements.")
@@ -19,6 +19,7 @@ IQ_group = st.selectbox(
 )
 extra_curr_score=st.selectbox("Rate your involvement in extra-curricular activites", ['None', 'Low', 'Moderate', 'High'])
 Comm_score=st.selectbox("Rate your Soft Skills/Communication Skills", ['Poor', 'Fair', 'Good', 'Excellent'])
+
 
 
 if st.button("Predict Placement"):
