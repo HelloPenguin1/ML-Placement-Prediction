@@ -1,0 +1,26 @@
+# Ignore Python cache directories
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Ignore virtual environment directories
+venv/
+.venv/
+
+# Ignore Git related files and directories
+.git/
+.gitignore
+
+# Ignore IDE specific files/directories (e.g., VS Code)
+.vscode/
+
+# Ignore the kaggle.json file as it's sensitive and not needed in the final image
+kaggle/kaggle.json 
+
+
+# Ignore the Jupyter Notebook file, not needed for production deployment
+ML_Code.ipynb
+
+# Ignore any log files
+*.log
