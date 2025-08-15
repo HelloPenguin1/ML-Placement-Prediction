@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = 'http://13.62.54.100/:8000/predict'  ##noted from FASTAPI /docs 
+API_URL = 'http://13.62.54.100:8000/predict'  ##noted from FASTAPI /docs 
 
 #above will be replaced when the api is publicly deployed 
 
