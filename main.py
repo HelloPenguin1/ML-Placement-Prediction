@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, computed_field
-from typing import Literal, Annotated
 from schema.userinput import UserInput
 from model.predict import predict_output, model
 import pickle
@@ -38,7 +36,7 @@ def health_check():
 def predict_placement(data: UserInput):
     try:
         input_df = {
-            'Prev_Sem_Result': data.Prev_Sem_Result,
+            'Prev_Sem_Result': data.Prev_Sem_Result,   #getting the variables from Pydantic model 'UserInput'
             'CGPA': data.CGPA,
             'Academic_Performance':data.Academic_Performance,
             'Internship_Experience': data.Internship_Experience,

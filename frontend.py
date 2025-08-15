@@ -1,12 +1,14 @@
 import streamlit as st
 import requests
 
-API_URL = 'http://127.0.0.1:8000/predict'  ##noted from FASTAPI /docs
+API_URL = 'http://13.62.54.100/:8000/predict'  ##noted from FASTAPI /docs 
+
+#above will be replaced when the api is publicly deployed 
 
 st.title("College Student Placement Prediction")
 st.markdown("Based on a realistic synthetic Kaggle dataset of 10,000 students designed to analyze factors affecting college placements.")
 
-#input 
+#input thru streamlit
 Prev_Sem_Result=st.number_input("Previous Semester GPA (out of 10)", min_value=5.00, max_value=10.00, step=0.1, format="%.2f")
 CGPA=st.number_input("Current CGPA (out of 10)", min_value=5.00, max_value=10.00, step=0.1, format="%.2f")
 Academic_Performance=st.slider("Rate your Academic Performance on a scale of 1 to 10", min_value=1, max_value=10)
